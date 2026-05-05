@@ -6,7 +6,7 @@ const inputField = document.getElementById('inputData');
 const canvas = document.getElementById('meuCanvas');
 const ctx = canvas.getContext('2d');
 
-import {geraPoligono} from "./poligono.js"
+import { criaObj } from "./obj3d.js";
 
 window.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && modal.style.display !== 'flex') {
@@ -16,13 +16,20 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-window.addEventListener('keydown', (event) => {
-    if (event.key === " ") {
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        geraPoligono()
+
+const processaDadosModal = (dados) =>{
+    const linhas = dados.trim().split(/\r?\n/)
+    const a = parseInt(linhas[0]);
+    const b = parseInt(linhas[1]);
+    const strParaNumeros = (linha) => linha.trim().split(/\s+/).map(Number);
+    const matrizA = linhas.slice(2, a + 2).map(strParaNumeros);
+    const matrizB = linhas.slice(a + 2).map(strParaNumeros);
+
+    return {
+        vertices: matrizA,
+        arestas: matrizB
     }
-});
+}
 
 // Fecha o modal sem fazer nada
 cancelBtn.onclick = () => {
@@ -36,9 +43,11 @@ confirmBtn.onclick = () => {
     
     if (dados.trim() !== "") {
         console.log("Dados recebidos para processar o 3D:", dados);
-        criarObj(dados)
+        var {vertices, arestas} = processaDadosModal(dados)
         modal.style.display = 'none'; // Fecha após confirmar
         inputField.value = ''; // Limpa para a próxima
+
+        criaObj(vertices, arestas)
     } else {
         alert("Por favor, preencha o campo!");
     }

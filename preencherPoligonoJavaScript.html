@@ -195,8 +195,8 @@
             const dados = inputField.value;
             
             if (dados.trim() !== "") {
-                console.log("Dados recebidos para processar o 3D:", dados);
-                criarObj(dados)
+                const {vertices, arestas} = processaDados(dados)
+                console.log(vertices, arestas)
                 modal.style.display = 'none'; // Fecha após confirmar
                 inputField.value = ''; // Limpa para a próxima
             } else {
