@@ -4,14 +4,14 @@ import {linhaBres, setPixel} from "./rast.js"
 Exemplo obj cubo: 
 8
 12
--100 100 100
-100 100 100
-100 -100 100
--100 -100 100
--100 100 -100
-100 100 -100
-100 -100 -100
--100 -100 -100
+-1 1 1
+1 1 1
+1 -1 1
+-1 -1 1
+-1 1 -1
+1 1 -1
+1 -1 -1
+-1 -1 -1
 0 1
 1 2
 2 3
@@ -66,11 +66,10 @@ const multiply = (a, b) => {
     return resultado;
 }
 
-const transformacaoLinearObj = (verticesObj) => {
+const transformacaoLinearObj = (verticesObj, m, k, s, width, height) => {
     // (cx, cy, cz) = centro do objeto
     const {x,y,z} = centroObj(verticesObj)
     // pontos [x,y,z,m]
-    const m = 1
     verticesObj.forEach((linha) => {
         linha.push(m);
     });
@@ -90,7 +89,7 @@ const transformacaoLinearObj = (verticesObj) => {
     var Pcav = [ // Projeção cavaleira
         [1, 0, 0, 0],
         [0, 1, 0, 0],
-        [cos, sen, 0, 0],
+        [k*cos, k*sen, 0, 0],
         [0, 0, 0, 1]
     ]
     var Rinv = [ // Inverte eixos
@@ -99,20 +98,24 @@ const transformacaoLinearObj = (verticesObj) => {
         [0, 0, -1, 0],
         [0, 0, 0, 1]
     ]
+    var Scala = [
+        [s, 0, 0, 0],
+        [0, s, 0, 0],
+        [0, 0, s, 0],
+        [0, 0, 0, 1]
+    ]
     var Ttela = [ // Translada pro centro da tela
         [1, 0, 0, 0],
         [0, 1, 0, 0],
         [0, 0, 1, 0],
-        [320, 240, 0, 1]
+        [width/2, height/2, 0, 1]
     ]
-    var resultado = multiply(multiply(multiply(multiply(verticesObj, Tobj), Pcav), Rinv), Ttela)
+    var resultado = multiply(multiply(multiply(multiply(multiply(verticesObj, Tobj), Pcav), Rinv), Scala), Ttela)
     return resultado
-    console.log("depois de tudo: " + verticesObj)
-
 }
 
-const criaObj = (verticesObj, arestasObj) => {
-    var resultado = transformacaoLinearObj(verticesObj)
+const criaObj = (verticesObj, arestasObj, m, k, s, w, h) => {
+    var resultado = transformacaoLinearObj(verticesObj, m, k, s, w, h)
     console.log("chegou aqui")
     for (let index = 0; index < arestasObj.length; index++) {
         var pontoA = resultado[arestasObj[index][0]]
