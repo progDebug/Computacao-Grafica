@@ -4,14 +4,14 @@ import {linhaBres, setPixel} from "./rast.js"
 Exemplo obj cubo: 
 8
 12
--20 20 20
-20 20 20
-20 -20 20
--20 -20 20
--20 20 -20
-20 20 -20
-20 -20 -20
--20 -20 -20
+-100 100 100
+100 100 100
+100 -100 100
+-100 -100 100
+-100 100 -100
+100 100 -100
+100 -100 -100
+-100 -100 -100
 0 1
 1 2
 2 3
@@ -39,88 +39,86 @@ const centroObj = (verticesObj) =>{
     }
 
     return {
-        x: Math.round(somaX / totalPontos),
-        y: Math.round(somaY / totalPontos),
-        z: Math.round(somaZ / totalPontos)
+        x: somaX / totalPontos,
+        y: somaY / totalPontos,
+        z: somaZ / totalPontos
     };  
 }
 
-function multiply(vector, matrix) {
-    const numCols = matrix[0].length;
+const multiply = (a, b) => {
+    let aLinhas = a.length, aColunas = a[0].length,
+        bLinhas = b.length, bColunas = b[0].length,
+        resultado = new Array(aLinhas);
 
-    return Array(numCols).fill(0).map((_, colIndex) => {
+    if (aColunas !== bLinhas) {
+        throw new Error("Colunas da Matriz A devem igualar Linhas da Matriz B");
+    }
 
-      return vector.reduce((sum, value, rowIndex) => {
-        return sum + (value * matrix[rowIndex][colIndex]);
-      }, 0);
-    });
-    
+    for (let i = 0; i < aLinhas; i++) {
+        resultado[i] = new Array(bColunas);
+        for (let j = 0; j < bColunas; j++) {
+            resultado[i][j] = 0;
+            for (let k = 0; k < aColunas; k++) {
+                resultado[i][j] += a[i][k] * b[k][j];
+            }
+        }
+    }
+    return resultado;
 }
 
 const transformacaoLinearObj = (verticesObj) => {
     // (cx, cy, cz) = centro do objeto
     const {x,y,z} = centroObj(verticesObj)
-
-    var Tobj = [ // Translada obj
-        [1, 0 , 0, -1*(x)],
-        [0, 1, 0, -1*(y)],
-        [0, 0, 1, -1*(z)],
-        [0, 0, 0, 1]
-    ]
+    // pontos [x,y,z,m]
+    const m = 1
     verticesObj.forEach((linha) => {
-        linha.push(1);
+        linha.push(m);
     });
-
-    console.log("vertices: "+ verticesObj)
-    for (let index = 0; index < verticesObj.length; index++) {
-        verticesObj[index] = multiply(verticesObj[index], Tobj)
-    }
+    var Tobj = [ // Translada obj
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [-1*(x), -1*(y), -1*(z), 1]
+    ]
+    
     const anguloRadianos = 45 * (Math.PI/180) // 45°
 
     const sen = Math.sin(anguloRadianos).toFixed(4)
     const cos = Math.cos(anguloRadianos).toFixed(4)
-
+    // pontos [x,y,z,m]
+    // k = 1 ou 0.5
     var Pcav = [ // Projeção cavaleira
-        [1, 0, Math.round(cos), 0],
-        [0, 1, Math.round(sen), 0],
-        [0, 0, 0, 0],
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [cos, sen, 0, 0],
         [0, 0, 0, 1]
     ]
-
-    for (let index = 0; index < verticesObj.length; index++) {
-        verticesObj[index] = multiply(verticesObj[index], Pcav)
-    }   
-    
     var Rinv = [ // Inverte eixos
         [1, 0, 0, 0],
         [0, -1, 0, 0],
         [0, 0, -1, 0],
         [0, 0, 0, 1]
     ]
-    for (let index = 0; index < verticesObj.length; index++) {
-        verticesObj[index] = multiply(verticesObj[index], Rinv)
-    }
-
     var Ttela = [ // Translada pro centro da tela
-        [1, 0, 0, 320],
-        [0, 1, 0, 240],
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
         [0, 0, 1, 0],
-        [0, 0, 0, 1]
+        [320, 240, 0, 1]
     ]
-
-    for (let index = 0; index < verticesObj.length; index++) {
-        verticesObj[index] = multiply(verticesObj[index], Ttela)
-    }
+    var resultado = multiply(multiply(multiply(multiply(verticesObj, Tobj), Pcav), Rinv), Ttela)
+    return resultado
     console.log("depois de tudo: " + verticesObj)
 
 }
 
 const criaObj = (verticesObj, arestasObj) => {
-    transformacaoLinearObj(verticesObj)
+    var resultado = transformacaoLinearObj(verticesObj)
+    console.log("chegou aqui")
     for (let index = 0; index < arestasObj.length; index++) {
-        var pontoA = verticesObj[arestasObj[index][0]]
-        var pontoB = verticesObj[arestasObj[index][1]]
-        linhaBres(pontoA[0], pontoA[1], pontoB[0], pontoB[1], 1)
+        var pontoA = resultado[arestasObj[index][0]]
+        var pontoB = resultado[arestasObj[index][1]]
+        console.log("pontoA:" + pontoA,"PontoB: " + pontoB)
+        linhaBres(Math.round(pontoA[0]), Math.round(pontoA[1]), Math.round(pontoB[0]), Math.round(pontoB[1]), 1)
     }  
 }
 
