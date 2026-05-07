@@ -148,36 +148,34 @@
         <div class="modal-box">
             <form id="meuFormulario" class="form-container">
                 <h2>Processar Objeto 3D</h2>
-
                 <div class="form-group">
                     <label>Vértices do Objeto:</label>
                     <textarea type="text" id="verticesEArestasObj" placeholder="Digite as coordenadas..."></textarea>
-                    
                     <span class="divider">ou</span>
-                    
                     <input type="file" id="verticesEArestasFile" accept=".txt,.obj">
                 </div>
-
                 <div class="form-group">
                     <label for="m">Valor de m:</label>
-                    <input type="number" id="m" step="any">
+                    <input type="number" id="m" step="any" value="1" readonly>
                 </div>
-
                 <div class="form-group">
                     <label for="k">Valor de k:</label>
                     <input type="number" id="k" step="any">
                 </div>
-
                 <div class="form-group">
                     <label for="s">Valor de s:</label>
                     <input type="number" id="s" step="any">
                 </div>
-
             </form>
             <div class="actions">
                 <button id="confirmBtn" type="button">Processar Obj3D</button>
                 <button id="cancelBtn" class="secondary" style="display: none;">Cancelar</button>
             </div>
+            <ul>
+                <li>M: É a coordenada homogena. [x,y,z,m]</li>
+                <li>K: É o fator de redução.</li>
+                <li>S: É a escala do objeto na tela.</li>
+            </ul>
         </div>
     </div>
     

@@ -10,6 +10,7 @@ const ctx = canvas.getContext('2d');
 
 import { criaObj } from "./obj3d.js";
 
+// Evento de abrir o menu do formulario. 
 window.addEventListener('keydown', (event) => {
     if (event.key === 'Enter' && modal.style.display !== 'flex') {
         event.preventDefault(); 
@@ -18,7 +19,7 @@ window.addEventListener('keydown', (event) => {
     }
 });
 
-
+// Aqui ele processa efetivamente o texto dos vértices. 
 const processaDadosModal = (dados) =>{
     const linhas = dados.trim().split(/\r?\n/)
     const a = parseInt(linhas[0]);
@@ -33,6 +34,7 @@ const processaDadosModal = (dados) =>{
     }
 }
 
+// Processa nada, é um get do formulario. 
 const processaFormulario = () =>{
     const dados = {
         m: document.getElementById('m').value,
@@ -40,7 +42,6 @@ const processaFormulario = () =>{
         s: document.getElementById('s').value,
         texto: document.getElementById('verticesEArestasObj').value,
     };
-
     return dados
 }
 
@@ -51,8 +52,7 @@ cancelBtn.onclick = () => {
 };
 
 // Captura texto do arquivo
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => { // Vê se o html foi carregado antes do javascript
     const input = document.getElementById("verticesEArestasFile");
     const textarea = document.getElementById("verticesEArestasObj");
 
@@ -64,12 +64,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        console.log("Arquivo:", file.name);
-
         const reader = new FileReader();
 
         reader.onload = function (e) {
-            console.log("Conteúdo carregado");
             textarea.value = e.target.result;
         };
 

@@ -1,33 +1,6 @@
 import {linhaBres, setPixel} from "./rast.js"
 
-/* 
-Exemplo obj cubo: 
-8
-12
--1 1 1
-1 1 1
-1 -1 1
--1 -1 1
--1 1 -1
-1 1 -1
-1 -1 -1
--1 -1 -1
-0 1
-1 2
-2 3
-3 0
-4 5
-5 6
-6 7
-7 4
-0 4
-1 5
-2 6
-3 7
-*/
-
-
-
+// Função para calcular o centro do objeto. Método mais simples: Centroide. Média de todos os eixos. 
 const centroObj = (verticesObj) =>{
     let somaX = 0, somaY = 0, somaZ = 0;
     const totalPontos = verticesObj.length / 3;
@@ -80,7 +53,7 @@ const transformacaoLinearObj = (verticesObj, m, k, s, width, height) => {
         [-1*(x), -1*(y), -1*(z), 1]
     ]
     
-    const anguloRadianos = 45 * (Math.PI/180) // 45°
+    const anguloRadianos = 45 * (Math.PI/180) // 45°, eu poderia colocar o usuario pra colocar ao angulo tambem.
 
     const sen = Math.sin(anguloRadianos).toFixed(4)
     const cos = Math.cos(anguloRadianos).toFixed(4)
@@ -89,7 +62,7 @@ const transformacaoLinearObj = (verticesObj, m, k, s, width, height) => {
     var Pcav = [ // Projeção cavaleira
         [1, 0, 0, 0],
         [0, 1, 0, 0],
-        [k*cos, k*sen, 0, 0],
+        [-(k*cos), -(k*sen), 0, 0],
         [0, 0, 0, 1]
     ]
     var Rinv = [ // Inverte eixos
@@ -114,6 +87,7 @@ const transformacaoLinearObj = (verticesObj, m, k, s, width, height) => {
     return resultado
 }
 
+// Auto explicativo, mas como recebe todos os mesmos dados de transformação linear acho que ficou redundante 
 const criaObj = (verticesObj, arestasObj, m, k, s, w, h) => {
     var resultado = transformacaoLinearObj(verticesObj, m, k, s, w, h)
     console.log("chegou aqui")

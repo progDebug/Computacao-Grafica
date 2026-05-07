@@ -63,15 +63,4 @@ const linhaBres = (xi, yi, xf, yf, color) =>{
     }
 }
 
-// Parametros das cores
-//- Branco:   0
-//- Vermelho: 1
-//- Roxo:     2
-//- Azul:     3
-//- Verde:    4
-//- Amarelo:  5
-
-// Pontos no formato [[x,y],[x2,y2]]
-// Desenha as bordas do poligono
-
 export {linhaBres, setPixel};
