@@ -1,16 +1,16 @@
 import {linhaBres, setPixel} from "./rast.js"
 
 // Função para calcular o centro do objeto. Método mais simples: Centroide. Média de todos os eixos. 
-const centroObj = (verticesObj) =>{
+const centroObj = (verticesObj) => {
     let somaX = 0, somaY = 0, somaZ = 0;
-    const totalPontos = verticesObj.length / 3;
+    const totalPontos = verticesObj.length; 
 
-    for (let i = 0; i < verticesObj.length; i += 3) {
-        somaX += verticesObj[i][0];
-        somaY += verticesObj[i][1];
-        somaZ += verticesObj[i][2];
+    for (let i = 0; i < totalPontos; i++) {
+        somaX += verticesObj[i][0]; // X do ponto i
+        somaY += verticesObj[i][1]; // Y do ponto i
+        somaZ += verticesObj[i][2]; // Z do ponto i
     }
-
+    // Eu estava calculando errado por isso o obj ficava descentralizado.
     return {
         x: somaX / totalPontos,
         y: somaY / totalPontos,
@@ -99,4 +99,4 @@ const criaObj = (verticesObj, arestasObj, m, k, s, w, h) => {
     }  
 }
 
-export {criaObj}
+export {criaObj, multiply}
