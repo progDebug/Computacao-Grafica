@@ -1,4 +1,5 @@
-import { multiply, criaObj } from "./obj3d"
+import { multiply, criaObj, criaObjTransformado } from "./obj3d"
+import { limpaTela } from "./canva";
 
 const adicionaM = (m) => {
     m.forEach((linha) => {
@@ -7,7 +8,6 @@ const adicionaM = (m) => {
 }
 
 const TREX = (m,t=0, r=0, e=1) =>{ // Translação, rotação, escala no eixo X -> Transformações lineares no eixo x
-    adicionaM(m)
     function translationX(t) {
         return [
             [1, 0, 0, 0],
@@ -45,8 +45,7 @@ const TREX = (m,t=0, r=0, e=1) =>{ // Translação, rotação, escala no eixo X 
     return multiply(m, multiply(multiply(T, R), S )) 
 }
 
-const TREY = (t=0,r=0,e=1) =>{
-    adicionaM(m)
+const TREY = (m, t=0,r=0,e=1) =>{
     function translationY(t) {
         return [
             [1, 0, 0, 0],
@@ -83,8 +82,7 @@ const TREY = (t=0,r=0,e=1) =>{
     return multiply(m, multiply(multiply(T, R), S )) 
 }
 
-const TREZ = (t=0,r=0,e=1) =>{
-    adicionaM(m)
+const TREZ = (m, t=0,r=0,e=1) =>{
     function translationZ(t) {
         return [
             [1, 0, 0, 0],
@@ -121,25 +119,3 @@ const TREZ = (t=0,r=0,e=1) =>{
     // Ordem: T * R * S   (escala → rotação → translação)
     return multiply(m, multiply(multiply(T, R), S )) 
 }
-
-
-// Translação no eixo X
-window.addEventListener('keydown', (event) => {
-    if (event.key.toLowerCase === 'q' || event.key.toLowerCase === 'w') {
-        TREX(1)
-    }
-});
-
-// Translação no eixo Y
-window.addEventListener('keydown', (event) => {
-    if (event.key.toLowerCase === 'a' || event.key.toLowerCase === 's') {
-        TREX(1)
-    }
-});
-
-// Translação no eixo Z
-window.addEventListener('keydown', (event) => {
-    if (event.key.toLowerCase === 'z' || event.key.toLowerCase === 'x') {
-        TREX(1)
-    }
-});

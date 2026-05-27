@@ -90,11 +90,9 @@ const transformacaoLinearObj = (verticesObj, m, k, s, width, height) => {
 // Auto explicativo, mas como recebe todos os mesmos dados de transformação linear acho que ficou redundante 
 const criaObj = (verticesObj, arestasObj, m, k, s, w, h) => {
     var resultado = transformacaoLinearObj(verticesObj, m, k, s, w, h)
-    console.log("chegou aqui")
     for (let index = 0; index < arestasObj.length; index++) {
         var pontoA = resultado[arestasObj[index][0]]
         var pontoB = resultado[arestasObj[index][1]]
-        console.log("pontoA:" + pontoA,"PontoB: " + pontoB)
         linhaBres(Math.round(pontoA[0]), Math.round(pontoA[1]), Math.round(pontoB[0]), Math.round(pontoB[1]), 1)
     }  
 }

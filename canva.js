@@ -8,7 +8,7 @@ const height = 480
 const canvas = document.getElementById('meuCanvas');
 const ctx = canvas.getContext('2d');
 
-import { criaObj } from "./obj3d.js";
+import { criaObj, criaObjTransformado } from "./obj3d.js";
 
 // Evento de abrir o menu do formulario. 
 window.addEventListener('keydown', (event) => {
@@ -78,22 +78,69 @@ document.addEventListener("DOMContentLoaded", () => { // Vê se o html foi carre
     });
 });
 
-// Lógica principal: Captura o texto e fecha
-confirmBtn.onclick = () => {
-    ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpa tela
-    document.getElementById("verticesEArestasFile").value = ""; // Limpa input file
+const limpaTela = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); 
+}
+
+const dadosObJ = () => {
     const dados = processaFormulario()
-    
     if (dados.texto.trim() !== "") {
         var {vertices, arestas} = processaDadosModal(dados.texto)
         modal.style.display = 'none'; // Fecha após confirmar
         inputField.value = ''; // Limpa para a próxima
-    criaObj(vertices, arestas, dados.m, dados.k, dados.s, width, height)
-    } else {
-        alert("Por favor, preencha o campo!");
+        return {
+            vertices,
+            arestas,
+            dados
+        }
+    }else{
+        alert("Preencha os campos")
     }
+}
 
+// Lógica principal: Captura o texto e fecha
+confirmBtn.onclick = () => {
+    limpaTela()
+    document.getElementById("verticesEArestasFile").value = ""; // Limpa input file
+    const dados = dadosObJ()
+    criaObj(dados.vertices, dados.arestas, dados.dados.m, dados.dados.k, dados.dados.s, width, height)
 };
+
+
+// Translação no eixo X
+window.addEventListener('keydown', (event) => {
+    const dados = processaFormulario()
+    if (event.key.toLowerCase === 'q') {
+        limpaTela()
+        obj = TREX(dados.vertices,-1)
+        criaObjTransformado(obj, dados.arestas)
+    }
+    if(event.key.toLowerCase === 'w'){
+        TREX(m,1)
+    }
+});
+
+// Translação no eixo Y
+window.addEventListener('keydown', (event) => {
+    const dados = processaFormulario()
+    if (event.key.toLowerCase === 'a') {
+        TREY(m,1)
+    }
+    if(event.key.toLowerCase === 's'){
+        TREY(m,-1)
+    }
+});
+
+// Translação no eixo Z
+window.addEventListener('keydown', (event) => {
+    const dados = processaFormulario()
+    if (event.key.toLowerCase === 'z') {
+        TREZ(m,1)
+    }
+    if(event.key.toLowerCase === 'x'){
+        TREZ(m,-1)
+    }
+});
 
 // Fecha se clicar fora da caixa branca
 window.onclick = (event) => {
@@ -102,4 +149,4 @@ window.onclick = (event) => {
     }
 };
 
-export {canvas, ctx}
+export {canvas, ctx, limpaTela}

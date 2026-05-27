@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T4</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;    
+            background-color: #1a1a1a; 
+        }
+
+        canvas {
+            background-color: black; /* Fundo do canvas */
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); 
+            border: 1px solid #333;
+        }
+        /* O fundo que escurece a tela */
+        .overlay {
+            display: none; /* Escondido por padrão */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* A caixa branca do formulário */
+        .modal-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        textarea {
+            height: 100px;
+            resize: none;
+        }
+
+        .secondary {
+            background: #ccc;
+            border: none;
+            margin-left: 5px;
+        }        
+
+        .title{
+            color: white;
+            text-align: center;
+        }
+
+
+        .form-container {
+            background: #ffffff;
+            padding: 25px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: auto;
+        }
+
+        /* Título */
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Grupos */
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Labels */
+        label {
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        /* Inputs */
+        input[type="text"],
+        input[type="number"],
+        input[type="file"] {
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            transition: 0.2s;
+        }
+
+        /* Hover/focus */
+        input:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 5px rgba(74, 144, 226, 0.3);
+        }
+
+        /* Divider */
+        .divider {
+            text-align: center;
+            margin: 10px 0;
+            color: #777;
+        }
+
+        /* Botão */
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 10px;
+            border: none;
+            border-radius: 8px;
+            background: #4a90e2;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #357abd;
+        }
+    </style>
+</head>
+<body>
+    <div class="conteiner">
+        <h1 class="title">Aperte Enter para abrir o menu</h1> 
+        <canvas id="meuCanvas" width="640" height="480"></canvas>
+    </div>
+
+    <div id="modalOverlay" class="overlay">
+        <div class="modal-box">
+            <form id="meuFormulario" class="form-container">
+                <h2>Processar Objeto 3D</h2>
+                <div class="form-group">
+                    <label>Vértices do Objeto:</label>
+                    <textarea type="text" id="verticesEArestasObj" placeholder="Digite as coordenadas..."></textarea>
+                    <span class="divider">ou</span>
+                    <input type="file" id="verticesEArestasFile" accept=".txt,.obj">
+                </div>
+                <div class="form-group">
+                    <label for="m">Valor de m:</label>
+                    <input type="number" id="m" step="any" value="1" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="k">Valor de k:</label>
+                    <input type="number" id="k" step="any">
+                </div>
+                <div class="form-group">
+                    <label for="s">Valor de s:</label>
+                    <input type="number" id="s" step="any">
+                </div>
+            </form>
+            <div class="actions">
+                <button id="confirmBtn" type="button">Processar Obj3D</button>
+                <button id="cancelBtn" class="secondary" style="display: none;">Cancelar</button>
+            </div>
+            <ul>
+                <li>M: É a coordenada homogena. [x,y,z,m]</li>
+                <li>K: É o fator de redução.</li>
+                <li>S: É a escala do objeto na tela.</li>
+            </ul>
+        </div>
+    </div>
+    <script type="module" src="./src/main.js"></script>
+</body>
+</html>
