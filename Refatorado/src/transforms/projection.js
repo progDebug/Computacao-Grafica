@@ -49,17 +49,8 @@ const vanishingPointZ = (d) => {
     return [
         [1, 0, 0, 0],
         [0, 1, 0, 0],
-        [0, 0, 1, 1/d],
+        [0, 0, 1, -1/d],
         [0, 0, 0, 0]       
-    ]
-}
-
-const vanishingPointZX = (dx, dz) => {
-    return [
-        [1, 0, 0, 1/dx],
-        [0, 1, 0, 0],
-        [0, 0, 1, 1/dz],
-        [0, 0, 0, 0]           
     ]
 }
 
@@ -76,5 +67,4 @@ export { cavalierProjection,
     cabinetProjection, 
     isometricProjection, 
     vanishingPointZ, 
-    vanishingPointZX, 
     orthographicProjection};

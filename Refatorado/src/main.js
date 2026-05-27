@@ -10,12 +10,15 @@ import { cavalierProjection,
     cabinetProjection, 
     isometricProjection, 
     vanishingPointZ, 
-    vanishingPointZX, 
     orthographicProjection} from "./transforms/projection.js";
+
+import {perspectiveDivide} from "./transforms/perspectiveDivide.js"
 
 import { applyPipeline } from "./transforms/transformPipeline.js";
 
 import { translationMatrix } from "./transforms/translation.js";
+
+import { rotationY } from "./transforms/rotation.js";
 
 // ==========================
 // Variaveis Globais
@@ -60,24 +63,26 @@ window.addEventListener('keydown', (event) => {
 
     if(event.key == 'F2') alert(`Controles do Objeto 3D
                                     Tecla | Ação
-                                    Q | Move o objeto no eixo X negativo (esquerda)
-                                    W | Move o objeto no eixo X positivo (direita)
-                                    A | Move o objeto no eixo Y negativo (baixo)
-                                    S | Move o objeto no eixo Y positivo (cima)
-                                    Z | Move o objeto no eixo Z negativo
-                                    X | Move o objeto no eixo Z positivo
-                                    E | Diminui a escala no eixo X
-                                    R | Aumenta a escala no eixo X
-                                    D | Diminui a escala no eixo Y
-                                    F | Aumenta a escala no eixo Y
-                                    C | Diminui a escala no eixo Z
-                                    V | Aumenta a escala no eixo Z
-                                    T | Rotaciona negativamente no eixo X
-                                    Y | Rotaciona positivamente no eixo X
-                                    G | Rotaciona negativamente no eixo Y
-                                    H | Rotaciona positivamente no eixo Y
-                                    B | Rotaciona negativamente no eixo Z
-                                    N | Rotaciona negativamente no eixo Z`)
+                                    Q Move o objeto no eixo X negativo (esquerda)
+                                    W Move o objeto no eixo X positivo (direita)
+                                    A Move o objeto no eixo Y negativo (baixo)
+                                    S Move o objeto no eixo Y positivo (cima)
+                                    Z Move o objeto no eixo Z negativo (trás)
+                                    X Move o objeto no eixo Z positivo (frente)
+                                    E Diminui a escala no eixo X
+                                    R Aumenta a escala no eixo X
+                                    D Diminui a escala no eixo Y
+                                    F Aumenta a escala no eixo Y
+                                    C Diminui a escala no eixo Z
+                                    V Aumenta a escala no eixo Z
+                                    T Rotaciona negativamente no eixo X
+                                    Y Rotaciona positivamente no eixo X
+                                    G Rotaciona negativamente no eixo Y
+                                    H Rotaciona positivamente no eixo Y
+                                    B Rotaciona negativamente no eixo Z
+                                    N Rotaciona negativamente no eixo Z
+                                    P troca de projeção
+                                    `)
 });
 
 // ==========================
@@ -119,12 +124,10 @@ const getProjectionMatrix = () => {
             );
         
         case "pontoFugaZ":
-            return vanishingPointZ(550); 
-            // Valor arbitrario bom de acordo com meu width de acordo com o google
+            return vanishingPointZ(500); // Valor arbitrario bom de acordo com meu width de acordo com o google
         
         case "pontoFugaZX":
-            return vanishingPointZX(1500, 550);
-            // Valor arbitrario bom de acordo com meu width de acordo com o google
+            return vanishingPointZ(500); // Valor arbitrario bom de acordo com meu width de acordo com o google
     }
 }
 
@@ -144,19 +147,47 @@ const redraw = () => {
         canvas.height
     ); // apagar o canva
 
-    // vertices transformados
-    const transformed = currentObject.getTransformedVertices();
-    console.log(projectionConfig.type)
-    
+    // vertices transformado
+    const transformed =
+        currentObject.getTransformedVertices();
+        
+    const transformedZX = // Fiz isso para não salvar a rotação nas outras transformações
+        applyPipeline(  
+            transformed,
+            [
+                rotationY(45)
+            ]
+        )
     projectionConfig.k = document.getElementById('k').value
     // select da projeção
     const projection = getProjectionMatrix();
-
+    
+//    const projected =
+//    applyPipeline(
+//        transformed,
+//        [projection]
+//    );
+ 
     const projected =
-        applyPipeline(
-            transformed,
-            [projection]
-        );
+        projectionConfig.type === 'pontoFugaZ' || projectionConfig.type === 'pontoFugaZX'
+            ? projectionConfig.type == 'pontoFugaZ' 
+                ? perspectiveDivide(
+                    applyPipeline(
+                        transformed,
+                        [projection]
+                    )
+                )
+                : perspectiveDivide(
+                    applyPipeline(
+                        transformedZX,
+                        [projection]
+                    )
+                )
+            : applyPipeline(
+                transformed,
+                [projection]
+            );    
+
 
     // inverter eixo Y
     const Rinv = [
@@ -182,33 +213,10 @@ const redraw = () => {
                 Ttela
             ]
         );
-        console.log(screenVertices)
-//    if (projectionConfig.type == 'pontoFugaZ' || projectionConfig.type == 'pontoFugaZX'){
-//        let aLinhas = screenVertices.length;
-//        let aColunas = screenVertices[0].length;
-//        let resultado = new Array(aLinhas);
-//
-//        for (let i = 0; i < aLinhas; i++) {
-//            resultado[i] = new Array(aColunas);
-//            for (let k = 0; k < aColunas; k++) {
-//                if (k == 0 || k == 1) {
-//                    resultado[i][k] = resultado[i][k]*550/screenVertices[i][2]
-//                    console.log(screenVertices)
-//                }
-//            }
-//        }
-//        renderObject(
-//            resultado,
-//            currentObject.arestas
-//        )
-//
-//    } else{
     renderObject(
         screenVertices,
         currentObject.arestas
     );
-//    }
-
 };
 
 // ==========================
@@ -217,42 +225,67 @@ const redraw = () => {
 
 confirmBtn.onclick = () => {
 
-    const texto =
-        document
-        .getElementById(
-            'verticesEArestasObj'
-        )
-        .value;
+    const dados = {
+        m: document.getElementById('m').value,
+        k: document.getElementById('k').value,
+        s: document.getElementById('s').value,
+        text: document.getElementById('verticesEArestasObj').value,
+    };
 
-    if (texto.trim() === "") {
-
+    if (dados.text.trim() === "") {
         alert("Preencha os dados");
-
         return;
     }
 
     const {
         vertices,
         arestas
-    } = parseObjData(texto);
+    } = parseObjData(dados.text);
 
     currentObject =
         new Object3D(
             vertices,
             arestas
-        );
-    const sInitial = document.getElementById('s').value 
+        ); 
     // escala inicial
     currentObject.setScale(
-        sInitial,
-        sInitial,
-        sInitial
+        dados.s,
+        dados.s,
+        dados.s
     );
 
     redraw();
 
     modal.style.display = 'none';
 };
+
+// Captura texto do arquivo
+document.addEventListener("DOMContentLoaded", () => { // Vê se o html foi carregado antes do javascript
+    const input = document.getElementById("verticesEArestasFile");
+    const textarea = document.getElementById("verticesEArestasObj");
+
+    input.addEventListener("change", function () {
+        const file = this.files[0];
+
+        if (!file) {
+            console.log("Nenhum arquivo selecionado");
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (e) {
+            textarea.value = e.target.result;
+        };
+
+        reader.onerror = function () {
+            console.error("Erro ao ler o arquivo");
+        };
+
+        reader.readAsText(file);
+    });
+});
+
 
 
 // ==========================
@@ -369,11 +402,9 @@ window.addEventListener('keydown', (e) => {
         case 'p':
             currentIndex++;
             currentIndex >= 5 ? currentIndex = 0 : currentIndex;
-            console.log(currentIndex)
             projectionConfig.type = projections[currentIndex];
-
+            document.getElementById("type-projection").innerText = 'Projeção: ' + projectionConfig.type
             break;     
     }
-
     redraw();
 });
