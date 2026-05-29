@@ -226,9 +226,9 @@ const redraw = () => {
 confirmBtn.onclick = () => {
 
     const dados = {
-        m: document.getElementById('m').value,
-        k: document.getElementById('k').value,
-        s: document.getElementById('s').value,
+        m: parseInt(document.getElementById('m').value),
+        k: parseInt(document.getElementById('k').value),
+        s: parseInt(document.getElementById('s').value),
         text: document.getElementById('verticesEArestasObj').value,
     };
 
@@ -332,10 +332,14 @@ window.addEventListener('keydown', (e) => {
             );
             break;
         case 'd':
+            console.log(currentObject)
             currentObject.scale.y -=1
+            console.log(currentObject)
             break;
         case 'f':
+            console.log(currentObject)
             currentObject.scale.y +=1
+            console.log(currentObject)
             break;  
         case 'z':
             currentObject.translate(
