@@ -54,17 +54,17 @@ const vanishingPointZ = (d) => {
     ]
 }
 
-const orthographicProjection = () =>{
-    return [
-        [1, 0, 0, 1],
-        [0, 1, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 1]       
-    ]
-}
+// const orthographicProjection = () =>{
+//    return [
+//        [1, 0, 0, 1],
+//        [0, 1, 0, 0],
+//        [0, 0, 0, 0],
+//        [0, 0, 0, 1]       
+//    ]
+//}
 
 export { cavalierProjection, 
     cabinetProjection, 
     isometricProjection, 
     vanishingPointZ, 
-    orthographicProjection};
+    };

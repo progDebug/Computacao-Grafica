@@ -1,3 +1,4 @@
+// Maneira mais simples de calcular o centro do obj
 const centroObj = (verticesObj) => {
     let somaX = 0;
     let somaY = 0;

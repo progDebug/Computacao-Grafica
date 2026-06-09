@@ -9,10 +9,10 @@ import { renderObject } from "./core/renderer.js";
 import { cavalierProjection, 
     cabinetProjection, 
     isometricProjection, 
-    vanishingPointZ, 
-    orthographicProjection} from "./transforms/projection.js";
+    vanishingPointZ
+    } from "./transforms/projection.js";
 
-import {perspectiveDivide} from "./transforms/perspectiveDivide.js"
+import { perspectiveDivide } from "./transforms/perspectiveDivide.js"
 
 import { applyPipeline } from "./transforms/transformPipeline.js";
 
@@ -43,6 +43,7 @@ const projections = [
     "pontoFugaZX"
 ];
 let currentIndex = 0;
+
 // ==========================
 // Abre modal
 // ==========================
