@@ -2,7 +2,7 @@ import { canvas, ctx } from "./core/canvas.js";
 
 import { parseObjData } from "./objects/loader.js";
 
-import { Object3D } from "./objects/object3d.js";
+import { Object3D, Object3DMesh } from "./objects/object3d.js";
 
 import { renderObject } from "./core/renderer.js";
 
@@ -31,7 +31,9 @@ const confirmBtn = document.getElementById('confirmBtn');
 const inputField = document.getElementById('verticesEArestasObj');
 const width = canvas.width;
 const height = canvas.height;
+let objectsScene = [];
 let currentObject = null;
+let indexCurrentObj = 0;
 const projectionConfig = {
     type: "cavaleira",
     k: 0.5,
@@ -140,60 +142,26 @@ const getProjectionMatrix = () => {
 // Renderização principal
 // ==========================
 
-const redraw = () => {
-
-    if (!currentObject) return;
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    ); // apagar o canva
-
-    // vertices transformado
-    const transformed =
-        currentObject.getTransformedVertices();
-        
-    const transformedZX = // Fiz isso para não salvar a rotação nas outras transformações
-        applyPipeline(  
-            transformed,
-            [
-                rotationY(45)
-            ]
-        )
-    projectionConfig.k = document.getElementById('k').value
-    // select da projeção
-    const projection = getProjectionMatrix();
+const drawObject = (object) => {
     
-//    const projected =
-//    applyPipeline(
-//        transformed,
-//        [projection]
-//    );
- 
+    const transformed = object.getTransformedVertices();
+
+    const transformedZX = applyPipeline(
+        transformed,
+        [rotationY(45)]
+    );
+
+    projectionConfig.k = document.getElementById('k').value;
+
+    const projection = getProjectionMatrix();
+
     const projected =
         projectionConfig.type === 'pontoFugaZ' || projectionConfig.type === 'pontoFugaZX'
-            ? projectionConfig.type == 'pontoFugaZ' 
-                ? perspectiveDivide(
-                    applyPipeline(
-                        transformed,
-                        [projection]
-                    )
-                )
-                : perspectiveDivide(
-                    applyPipeline(
-                        transformedZX,
-                        [projection]
-                    )
-                )
-            : applyPipeline(
-                transformed,
-                [projection]
-            );    
+            ? projectionConfig.type === 'pontoFugaZ'
+                ? perspectiveDivide(applyPipeline(transformed, [projection]))
+                : perspectiveDivide(applyPipeline(transformedZX, [projection]))
+            : applyPipeline(transformed, [projection]);
 
-
-    // inverter eixo Y
     const Rinv = [
         [1, 0, 0, 0],
         [0, -1, 0, 0],
@@ -201,26 +169,44 @@ const redraw = () => {
         [0, 0, 0, 1]
     ];
 
-    // centralizar tela
-    const Ttela =
-        translationMatrix(
-            width / 2,
-            height / 2,
-            0
-        );
+    const Ttela = translationMatrix(
+        width / 2,
+        height / 2,
+        0
+    );
 
-    const screenVertices =
-        applyPipeline(
-            projected,
-            [
-                Rinv,
-                Ttela
-            ]
-        );
+    const screenVertices = applyPipeline(
+        projected,
+        [Rinv, Ttela]
+    );
+
+    if (object == currentObject){
+        renderObject(
+            screenVertices,
+            object.arestas,
+            2
+        );        
+        return
+    }
+
     renderObject(
         screenVertices,
-        currentObject.arestas
+        object.arestas,
+        1
     );
+};
+
+const redraw = () => {
+    ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+    for (const object of objectsScene) {
+        drawObject(object);
+    }
 };
 
 // ==========================
@@ -241,22 +227,32 @@ confirmBtn.onclick = () => {
         return;
     }
 
-    const {
-        vertices,
-        arestas
-    } = parseObjData(dados.text);
+    const objects = parseObjData(dados.text);
 
-    currentObject =
-        new Object3D(
-            vertices,
-            arestas
-        ); 
-    // escala inicial
-    currentObject.setScale(
-        dados.s,
-        dados.s,
-        dados.s
-    );
+    for (const object of objects) {
+        object.setScale(
+            dados.s,
+            dados.s,
+            dados.s
+        );
+        objectsScene.push(object);
+    }
+
+
+
+    // currentObject =
+    //     new Object3D(
+    //         vertices,
+    //         arestas
+    //     ); 
+    currentObject = objectsScene[indexCurrentObj];
+
+    // // escala inicial
+    // currentObject.setScale(
+    //     dados.s,
+    //     dados.s,
+    //     dados.s
+    // );
 
     redraw();
 
@@ -274,6 +270,55 @@ document.addEventListener("DOMContentLoaded", () => { // Vê se o html foi carre
 });
 
 
+// ==========================
+// CONTROLES DA TAREFA 6
+// ==========================
+
+const keysPressed = new Set();
+
+window.addEventListener('keydown', (event) => {
+    keysPressed.add(event.key.toLowerCase());
+
+    // if (event.key === "Tab") {
+    //     event.preventDefault();
+    //     indexCurrentObj == objectsScene.length - 1 ? 
+    //         indexCurrentObj = 0 : indexCurrentObj = indexCurrentObj += 1;
+    //     currentObject = objectsScene[indexCurrentObj]
+    //     console.log(objectsScene[indexCurrentObj], objectsScene[indexCurrentObj])
+    // }
+
+    // if (keysPressed.has("shift") && event.key === "Tab") {
+    //     event.preventDefault();
+    //     indexCurrentObj == 0 ? 
+    //         indexCurrentObj = objectsScene.length - 1 : indexCurrentObj = indexCurrentObj -= 1;
+    //     currentObject = objectsScene[indexCurrentObj]
+    //     console.log(objectsScene[indexCurrentObj], objectsScene[indexCurrentObj])
+    // }
+    if (event.key === "Tab") {
+        event.preventDefault();
+
+        if (event.shiftKey) {
+
+            indexCurrentObj === 0
+                ? indexCurrentObj = objectsScene.length - 1
+                : indexCurrentObj -= 1;
+
+        } else {
+
+            indexCurrentObj === objectsScene.length - 1
+                ? indexCurrentObj = 0
+                : indexCurrentObj += 1;
+
+        }
+
+        currentObject = objectsScene[indexCurrentObj];
+    }
+    redraw();
+});
+
+window.addEventListener("keyup", (event) => {
+    keysPressed.delete(event.key.toLowerCase());
+});
 
 // ==========================
 // CONTROLES
