@@ -5,13 +5,13 @@
 - [x] Incluir lista de faces no objeto 3D.
 - [x] Armazenar lista ordenada (sentido anti-horário) dos índices dos vértices de cada face.
 - [x] Armazenar cor RGB da face com valores no intervalo `[0,1]`.
-- [x] Adicionar campo `zMedio` (`float`) para cada face.
+- [] Adicionar campo `zMedio` (`float`) para cada face.
 - [x] Armazenar valores de rotação nos eixos X, Y e Z.
 - [x] Armazenar valores de escala nos eixos X, Y e Z.
 - [x] Armazenar valores de translação nos eixos X, Y e Z.
-- [x] Implementar função para adicionar uma face ao objeto.
-- [x] Implementar função para exibir o conteúdo completo do objeto no `console.log`.
-- [x] Implementar função para criar uma cópia de um objeto.
+- [] Implementar função para adicionar uma face ao objeto.
+- [] Implementar função para exibir o conteúdo completo do objeto no `console.log`.
+- [] Implementar função para criar uma cópia de um objeto.
 - [x] Garantir que a estrutura de dados suporte todas as informações do arquivo de entrada.
 
 ---
@@ -60,3 +60,6 @@
 - [x] Sistema de seleção implementado.
 - [x] Sistema de destaque visual implementado.
 - [x] Manipulação individual dos objetos implementada.
+
+---
+**Nota:** A redação e a formatação deste documento contaram com o auxílio da ferramenta de Inteligência Artificial ChatGPT. O conteúdo final foi revisado e aprovado pelo autor.
