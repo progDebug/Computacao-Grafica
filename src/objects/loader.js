@@ -22,16 +22,15 @@
     translação a ser feita do objeto nos eixos x, y e z respectivamente
 */
 
-const parseObjData = (dados) => {
+const parseObjData = (date) => {
     const regex = /^[//#]/
 
     // Remove espaços em branco e verifica se a linha não é um comentario que começa com '#'
-    const linhas = dados.trim()
+    const linhas = date.trim()
                         .split(/\r?\n/)
                         .filter(row => !regex.test(row));
     console.log(linhas)
 
-    const totalVertices = parseInt(linhas[0]);
     // Never Used
 //    const totalArestas = parseInt(linhas[1]);
 
@@ -39,18 +38,27 @@ const parseObjData = (dados) => {
         return linha.trim().split(/\s+/).map(Number);
     }
 
-    const vertices = linhas
-        .slice(2, totalVertices + 2)
-        .map(strParaNumeros);
+    const n = linhas[1];
+    for (let index = 0; index < n; index++) {
+        
+    }
 
-    const arestas = linhas
-        .slice(totalVertices + 2)
-        .map(strParaNumeros);
+    // const strParaNumeros = (linha) => {
+    //     return linha.trim().split(/\s+/).map(Number);
+    // }
 
-    return {
-        vertices,
-        arestas
-    };
+    // const vertices = linhas
+    //     .slice(2, totalVertices + 2)
+    //     .map(strParaNumeros);
+
+    // const arestas = linhas
+    //     .slice(totalVertices + 2)
+    //     .map(strParaNumeros);
+
+    // return {
+    //     vertices,
+    //     arestas
+    // };
 }
 
 export { parseObjData };

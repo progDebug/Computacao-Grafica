@@ -20,6 +20,8 @@ import { translationMatrix } from "./transforms/translation.js";
 
 import { rotationY } from "./transforms/rotation.js";
 
+import { loadTextInputFile, standartFile } from "./data/reader.js"
+
 // ==========================
 // Variaveis Globais
 // ==========================
@@ -42,6 +44,7 @@ const projections = [
     "pontoFugaZ", 
     "pontoFugaZX"
 ];
+
 let currentIndex = 0;
 
 // ==========================
@@ -264,27 +267,10 @@ confirmBtn.onclick = () => {
 document.addEventListener("DOMContentLoaded", () => { // Vê se o html foi carregado antes do javascript
     const input = document.getElementById("verticesEArestasFile");
     const textarea = document.getElementById("verticesEArestasObj");
+    const statusFile = document.getElementById("p-status-arquivo")
 
-    input.addEventListener("change", function () {
-        const file = this.files[0];
-
-        if (!file) {
-            console.log("Nenhum arquivo selecionado");
-            return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            textarea.value = e.target.result;
-        };
-
-        reader.onerror = function () {
-            console.error("Erro ao ler o arquivo");
-        };
-
-        reader.readAsText(file);
-    });
+    loadTextInputFile(input, textarea);
+    standartFile(statusFile, textarea, input);
 });
 
 
