@@ -60,6 +60,6 @@
 - [x] Sistema de destaque visual implementado.
 - [x] Manipulação individual dos objetos implementada.
 ---
-**Nota 1:** Não consegui transformar o espaço do mundo para o espaço da tela. Minhas funções de transformações começaram a bugar e eu não consegui corrigir. 
----
+**Nota 1:** Não consegui transformar o espaço do mundo para o espaço da tela. Minhas funções de transformações começaram a bugar e eu não consegui corrigir.
+
 **Nota 2:** A redação e a formatação deste documento contaram com o auxílio da ferramenta de Inteligência Artificial ChatGPT. O conteúdo final foi revisado e aprovado pelo autor.
