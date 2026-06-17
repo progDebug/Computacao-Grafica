@@ -23,6 +23,8 @@
 */
 import { Object3DMesh } from "./object3d.js";
 
+let UNIVERSE;
+
 const parseObjData = (date) => {
     const regex = /^[//#]/
 
@@ -30,15 +32,13 @@ const parseObjData = (date) => {
     const row = date.trim()
                         .split(/\r?\n/)
                         .filter(row => !regex.test(row));
-    // Never Used
-//    const totalArestas = parseInt(linhas[1]);
 
     const strParaNumeros = (linha) => {
         return linha.trim().split(/\s+/).map(Number);
     }
 
     const n = parseInt(row[1]);
-    const universe = parseInt(row[0])
+    UNIVERSE = row[0].split(' ').map(Number)
     const objects = []
     row.splice(0, 2) // Deletar elementos no array
     for (let index = 0; index < n; index++) {
@@ -57,7 +57,7 @@ const parseObjData = (date) => {
             .splice(0, metaData[1])
             .map(strParaNumeros)
         
-        const faces = new Array(metaData[2])
+        const faces = []
 
         for (let i = 0; i < metaData[2]; i++) {
 
@@ -109,24 +109,7 @@ const parseObjData = (date) => {
             obj
         )
     }
-
-    // const strParaNumeros = (linha) => {
-    //     return linha.trim().split(/\s+/).map(Number);
-    // }
-
-    // const vertices = linhas
-    //     .slice(2, totalVertices + 2)
-    //     .map(strParaNumeros);
-
-    // const arestas = linhas
-    //     .slice(totalVertices + 2)
-    //     .map(strParaNumeros);
-
-    // return {
-    //     vertices,
-    //     arestas
-    // };
     return objects
 }
 
-export { parseObjData };
+export { parseObjData, UNIVERSE };

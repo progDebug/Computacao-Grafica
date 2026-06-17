@@ -186,6 +186,13 @@ class Object3DMesh {
             matrices
         );
     }
+    getZMedio(verticesTransformados) {
+        let somaZ = 0;
+        this.faces.forEach(idx => {
+            somaZ += verticesTransformados[idx].z;
+        });
+        return somaZ / this.indices.length;
+    }
 }
 
 
