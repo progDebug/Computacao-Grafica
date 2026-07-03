@@ -192,10 +192,8 @@ const drawObject = (object) => {
                 screenVertices,
                 face,
                 face.cor
-            );
+            );         
         }
-        
-        return;
     }
 
     if (object == currentObject){

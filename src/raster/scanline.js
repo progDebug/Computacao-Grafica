@@ -18,16 +18,6 @@ const fillPolygon = (vertices, cor) => {
         const p1 = vertices[i];
         const p2 = vertices[(i + 1) % vertices.length];
         
-        if (p1[1] > p2[1]) {
-            vertices[i] = p2;
-            vertices[(i + 1) % vertices.length] = p1;
-        }
-    }
-
-    for (let i = 0; i < vertices.length; i++) {
-        const p1 = vertices[i];
-        const p2 = vertices[(i + 1) % vertices.length];
-        
         if (p1[1] !== p2[1]) {
             const edgeYMin = Math.min(p1[1], p2[1]);
             const edgeYMax = Math.max(p1[1], p2[1]);
