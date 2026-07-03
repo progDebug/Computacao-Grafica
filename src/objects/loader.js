@@ -28,7 +28,6 @@ let UNIVERSE;
 const parseObjData = (date) => {
     const regex = /^[//#]/
 
-    // Remove espaços em branco e verifica se a linha não é um comentario que começa com '#'
     const row = date.trim()
                         .split(/\r?\n/)
                         .filter(row => !regex.test(row));
@@ -37,19 +36,15 @@ const parseObjData = (date) => {
         return linha.trim().split(/\s+/).map(Number);
     }
 
-    const n = parseInt(row[1]);
     UNIVERSE = row[0].split(' ').map(Number)
+    const n = parseInt(row[1]);
     const objects = []
-    row.splice(0, 2) // Deletar elementos no array
+    row.splice(0, 2)
+
     for (let index = 0; index < n; index++) {
-
-        // metaData na posição 0 é o numero de vertices
-        // metaData na posição 1 é o número de arestas 
-        // metaData na posição 2 é o número de faces
         const metaData = row[0].split(' ').map(value => parseInt(value, 10));
-        row.shift() // Deletando o primeiro elemento
+        row.shift()
 
-        // Deletando todos os vertices depois de ler, para depois ler as arestas e depois o ciclo recomeça
         const vertices = row
             .splice(0, metaData[0])
             .map(strParaNumeros)
@@ -66,8 +61,8 @@ const parseObjData = (date) => {
             const qtdArestas = parseInt(current[0]);
 
             const face = {
-                arestas: current.slice(1, 1 + qtdArestas),
-                cor: current.slice(1 + qtdArestas, qtdArestas + 4)
+                arestas: current.slice(1, 1 + qtdArestas).map(v => parseInt(v)),
+                cor: current.slice(1 + qtdArestas, qtdArestas + 4).map(v => Math.max(0, Math.min(1, parseFloat(v))))
             };
 
             faces.push(face);

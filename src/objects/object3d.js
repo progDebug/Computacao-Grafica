@@ -188,10 +188,51 @@ class Object3DMesh {
     }
     getZMedio(verticesTransformados) {
         let somaZ = 0;
-        this.faces.forEach(idx => {
-            somaZ += verticesTransformados[idx].z;
+        this.faces.forEach(f => {
+            f.arestas.forEach(idx => {
+                somaZ += verticesTransformados[idx].z;
+            });
         });
-        return somaZ / this.indices.length;
+        return somaZ / this.faces.length;
+    }
+
+    getFaceNormal(face, verticesTransformados) {
+        const idx1 = face.arestas[0];
+        const idx2 = face.arestas[1];
+        const idx3 = face.arestas[2];
+        
+        const v1 = verticesTransformados[idx1];
+        const v2 = verticesTransformados[idx2];
+        const v3 = verticesTransformados[idx3];
+
+        const ax = v2[0] - v1[0];
+        const ay = v2[1] - v1[1];
+        const az = v2[2] - v1[2];
+
+        const bx = v3[0] - v1[0];
+        const by = v3[1] - v1[1];
+        const bz = v3[2] - v1[2];
+
+        const nx = ay * bz - az * by;
+        const ny = az * bx - ax * bz;
+        const nz = ax * by - ay * bx;
+
+        const len = Math.sqrt(nx*nx + ny*ny + nz*nz);
+        if (len === 0) return [0, 0, 0];
+        
+        return [nx/len, ny/len, nz/len];
+    }
+
+    isFaceVisible(normal) {
+        return normal[2] > 0;
+    }
+
+    computeFaceData(verticesTransformados) {
+        this.faces.forEach(face => {
+            face.normal = this.getFaceNormal(face, verticesTransformados);
+            face.zMedia = face.arestas.reduce((sum, idx) => sum + verticesTransformados[idx][2], 0) / face.arestas.length;
+            face.isVisible = this.isFaceVisible(face.normal);
+        });
     }
 }
 

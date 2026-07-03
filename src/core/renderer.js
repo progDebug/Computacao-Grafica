@@ -1,4 +1,5 @@
 import { linhaBres } from "../raster/bresenham.js";
+import { fillPolygon } from "../raster/scanline.js";
 
 const renderObject = (vertices, arestas, cor) => {
     for (const [a, b] of arestas) {
@@ -16,4 +17,9 @@ const renderObject = (vertices, arestas, cor) => {
     }
 }
 
-export { renderObject };
+const renderFace = (vertices, face, cor) => {
+    const faceVertices = face.arestas.map(idx => vertices[Math.floor(idx) - 1]);
+    fillPolygon(faceVertices, cor);
+};
+
+export { renderObject, renderFace };

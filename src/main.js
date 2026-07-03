@@ -4,7 +4,7 @@ import { parseObjData, UNIVERSE } from "./objects/loader.js";
 
 import { Object3D, Object3DMesh } from "./objects/object3d.js";
 
-import { renderObject } from "./core/renderer.js";
+import { renderObject, renderFace } from "./core/renderer.js";
 
 import { cavalierProjection, 
     cabinetProjection, 
@@ -161,30 +161,27 @@ const drawObject = (object) => {
                 : perspectiveDivide(applyPipeline(transformedZX, [projection]))
             : applyPipeline(transformed, [projection]);
 
+    const xmin = UNIVERSE[0], xmax = UNIVERSE[1];
+    const ymin = UNIVERSE[2], ymax = UNIVERSE[3];
+
+    const scaleX = width / (xmax - xmin);
+    const scaleY = height / (ymax - ymin);
+    const tx = -xmin * scaleX;
+    const ty = -ymin * scaleY;
+
+    const TVP = [
+        [scaleX, 0, 0, 0],
+        [0, scaleY, 0, 0],
+        [0, 0, 1, 0],
+        [tx, ty, 0, 1]
+    ];
+
     const Rinv = [
         [1, 0, 0, 0],
         [0, -1, 0, 0],
         [0, 0, 1, 0],
         [0, 0, 0, 1]
     ];
-    // const pTela = width/height; // Proporção da tela                  
-    // UNIVERSE[0] = UNIVERSE[0] * pTela;
-    // UNIVERSE[1] = UNIVERSE[1] * pTela;
-    // UNIVERSE[2] = UNIVERSE[2] * pTela;
-    // UNIVERSE[3] = UNIVERSE[3] * pTela;
-//    UNIVERSE.map((value)=>{return value*pTela})
-
-    // const [screenX, screenY] = [width / (UNIVERSE[1] - UNIVERSE[0]), 
-    //                             height / (UNIVERSE[3] - UNIVERSE[2])]    
-    // const [tx, ty] = [(-(UNIVERSE[0])*width) / (UNIVERSE[1] - UNIVERSE[0]),
-    //                   (-(UNIVERSE[2]*height)) / (UNIVERSE[3] - UNIVERSE[2])]
-
-    // const tTela = [
-    //     [screenX, 0, 0, 0],
-    //     [0, screenY, 0, 0],
-    //     [0, 0, 1, 0],
-    //     [tx, ty, 0, 1]
-    // ]
 
     const Ttela = translationMatrix(
         width / 2,
@@ -194,8 +191,26 @@ const drawObject = (object) => {
 
     const screenVertices = applyPipeline(
         projected,
-        [Rinv, Ttela]
+        [TVP, Rinv, Ttela]
     );
+
+    if (object instanceof Object3DMesh && object.faces && object.faces.length > 0) {
+        object.computeFaceData(screenVertices);
+        
+        const visibleFaces = object.faces
+            .filter(face => face.isVisible)
+            .sort((a, b) => a.zMedia - b.zMedia);
+
+        for (const face of visibleFaces) {
+            renderFace(
+                screenVertices,
+                face,
+                face.cor
+            );
+        }
+        
+        return;
+    }
 
     if (object == currentObject){
         renderObject(
