@@ -1,65 +1,105 @@
-# Checklist de Implementação
+# ✅ Checklist - Tarefa 07: Pintura das Faces
 
-## 1. Estrutura de Dados para Objetos 3D
+## Estrutura de Dados
 
-- [x] Incluir lista de faces no objeto 3D.
-- [x] Armazenar lista ordenada (sentido anti-horário) dos índices dos vértices de cada face.
-- [x] Armazenar cor RGB da face com valores no intervalo `[0,1]`.
-- [x] Adicionar campo `zMedio` (`float`) para cada face.
-- [x] Armazenar valores de rotação nos eixos X, Y e Z.
-- [x] Armazenar valores de escala nos eixos X, Y e Z.
-- [x] Armazenar valores de translação nos eixos X, Y e Z.
-- [x] Implementar função para exibir o conteúdo completo do objeto no `console.log`.
-- [x] Implementar função para criar uma cópia de um objeto.
-- [x] Garantir que a estrutura de dados suporte todas as informações do arquivo de entrada.
+- [x] Adicionar vetor normal em cada face
+- [x] Adicionar atributo de visibilidade (`visible`) em cada face
+- [x] Adicionar atributo para armazenar a profundidade média (`zMedio`) de cada face
+- [x] Garantir que cada face possua sua cor armazenada
 
 ---
 
-## 2. Leitura do Arquivo de Entrada
+# Cálculos Geométricos
 
-- [x] Implementar leitura automática do arquivo no início da execução.
-- [x] Utilizar o arquivo `figure.dat` como entrada.
-- [x] Ler um ou mais objetos 3D presentes no arquivo.
-- [x] Criar objetos utilizando a estrutura definida no Item 1.
-- [x] Armazenar os objetos carregados em uma lista.
+## Atualização dos Objetos
 
----
+- [x] Aplicar escalonamento
+- [x] Aplicar rotação
+- [x] Aplicar translação
 
-## 3. Manipulação de Múltiplos Objetos 3D
+## Vetor Normal
 
-### ~~a) Lista Circular~~
+- [x] Calcular o vetor normal de cada face
+- [x] Armazenar o vetor normal na estrutura da face
 
-- [x] Manter uma lista circular de objetos 3D carregados do arquivo.
+## Profundidade
 
-### ~~b) Exibição~~
-
-- [x] Exibir todos os objetos 3D presentes na lista.
-
-### ~~c) Seleção de Objetos~~
-
-- [x] Permitir avançar a seleção com a tecla `TAB`.
-- [x] Permitir retornar a seleção com `SHIFT + TAB`.
-- [x] Destacar visualmente o objeto selecionado.
-- [x] Exibir o objeto selecionado com cor diferente dos demais.
-- [x] Utilizar linhas vermelhas para indicar o objeto selecionado.
-
-### ~~d) Transformações~~
-
-- [x] Aplicar translação apenas ao objeto selecionado.
-- [x] Aplicar escalonamento apenas ao objeto selecionado.
-- [x] Aplicar rotação apenas ao objeto selecionado.
+- [x] Calcular o Z médio de cada face
+- [x] Armazenar o Z médio na estrutura da face
 
 ---
 
-## Status Geral
+# Remoção de Faces Ocultas
 
-- [x] Estrutura de dados concluída.
-- [x] Leitura do arquivo implementada.
-- [x] Suporte a múltiplos objetos concluído.
-- [x] Sistema de seleção implementado.
-- [x] Sistema de destaque visual implementado.
-- [x] Manipulação individual dos objetos implementada.
+- [x] Determinar quais faces são visíveis utilizando o vetor normal
+- [x] Atualizar o atributo de visibilidade de cada face
+
 ---
-**Nota 1:** Não consegui transformar o espaço do mundo para o espaço da tela. Minhas funções de transformações começaram a bugar e eu não consegui corrigir.
 
-**Nota 2:** A redação e a formatação deste documento contaram com o auxílio da ferramenta de Inteligência Artificial ChatGPT. O conteúdo final foi revisado e aprovado pelo autor.
+# Rotina de Desenho
+
+## Organização das Faces
+
+- [x] Criar uma lista contendo todas as faces visíveis de todos os objetos
+- [x] Ordenar as faces pelo Z médio (menor → maior)
+
+## Algoritmo do Pintor
+
+- [ ] Desenhar as faces da mais distante para a mais próxima
+- [ ] Utilizar a ordem determinada pelo Algoritmo do Pintor
+
+## Pintura
+
+- [ ] Pintar cada face utilizando sua cor
+- [ ] Utilizar o algoritmo de preenchimento por linha de varredura implementado anteriormente
+
+---
+
+# Funcionalidades Existentes
+
+## Projeções
+
+- [ ] Manter projeção paralela
+- [ ] Manter projeção em perspectiva (caso implementada anteriormente)
+- [ ] Permitir alternância entre as projeções
+
+## Transformações
+
+- [ ] Manter rotação do objeto
+- [ ] Manter escalonamento do objeto
+- [ ] Manter translação do objeto
+
+---
+
+# Restrições do Trabalho
+
+- [ ] Não utilizar WebGL
+- [ ] Não utilizar WebGPU
+- [ ] Não utilizar funções prontas de projeção 3D
+- [ ] Utilizar apenas as rotinas desenvolvidas nos trabalhos anteriores
+
+---
+
+# Testes
+
+- [ ] Testar cálculo correto das normais
+- [ ] Testar identificação de faces visíveis
+- [ ] Testar ordenação por profundidade
+- [ ] Testar funcionamento do Algoritmo do Pintor
+- [ ] Testar preenchimento correto das faces
+- [ ] Testar objetos rotacionados
+- [ ] Testar objetos escalonados
+- [ ] Testar objetos transladados
+- [ ] Testar diferentes projeções
+
+---
+
+# Entrega
+
+- [ ] Incluir código-fonte completo
+- [ ] Incluir arquivo(s) dos objetos 3D utilizados nos testes
+- [ ] Garantir execução em Ubuntu 24.04+
+- [ ] Compactar em `.zip` ou `.tgz`
+---
+
+**Nota:** A redação e a formatação deste documento contaram com o auxílio da ferramenta de Inteligência Artificial ChatGPT. O conteúdo final foi revisado e aprovado pelo autor.
