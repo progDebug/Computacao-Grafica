@@ -1,6 +1,6 @@
 import { canvas, ctx } from "./core/canvas.js";
 
-import { parseObjData } from "./objects/loader.js";
+import { parseObjData, UNIVERSE } from "./objects/loader.js";
 
 import { Object3D, Object3DMesh } from "./objects/object3d.js";
 
@@ -142,6 +142,7 @@ const getProjectionMatrix = () => {
 // Renderização principal
 // ==========================
 
+
 const drawObject = (object) => {
     
     const transformed = object.getTransformedVertices();
@@ -150,8 +151,6 @@ const drawObject = (object) => {
         transformed,
         [rotationY(45)]
     );
-
-    projectionConfig.k = document.getElementById('k').value;
 
     const projection = getProjectionMatrix();
 
@@ -168,6 +167,24 @@ const drawObject = (object) => {
         [0, 0, 1, 0],
         [0, 0, 0, 1]
     ];
+    // const pTela = width/height; // Proporção da tela                  
+    // UNIVERSE[0] = UNIVERSE[0] * pTela;
+    // UNIVERSE[1] = UNIVERSE[1] * pTela;
+    // UNIVERSE[2] = UNIVERSE[2] * pTela;
+    // UNIVERSE[3] = UNIVERSE[3] * pTela;
+//    UNIVERSE.map((value)=>{return value*pTela})
+
+    // const [screenX, screenY] = [width / (UNIVERSE[1] - UNIVERSE[0]), 
+    //                             height / (UNIVERSE[3] - UNIVERSE[2])]    
+    // const [tx, ty] = [(-(UNIVERSE[0])*width) / (UNIVERSE[1] - UNIVERSE[0]),
+    //                   (-(UNIVERSE[2]*height)) / (UNIVERSE[3] - UNIVERSE[2])]
+
+    // const tTela = [
+    //     [screenX, 0, 0, 0],
+    //     [0, screenY, 0, 0],
+    //     [0, 0, 1, 0],
+    //     [tx, ty, 0, 1]
+    // ]
 
     const Ttela = translationMatrix(
         width / 2,
@@ -216,9 +233,6 @@ const redraw = () => {
 confirmBtn.onclick = () => {
 
     const dados = {
-        m: parseInt(document.getElementById('m').value),
-        k: parseInt(document.getElementById('k').value),
-        s: parseInt(document.getElementById('s').value),
         text: document.getElementById('verticesEArestasObj').value,
     };
 
@@ -229,30 +243,11 @@ confirmBtn.onclick = () => {
 
     const objects = parseObjData(dados.text);
 
-    for (const object of objects) {
-        object.setScale(
-            dados.s,
-            dados.s,
-            dados.s
-        );
-        objectsScene.push(object);
-    }
+    for (const object of objects) objectsScene.push(object);
 
+    const universo = UNIVERSE
 
-
-    // currentObject =
-    //     new Object3D(
-    //         vertices,
-    //         arestas
-    //     ); 
     currentObject = objectsScene[indexCurrentObj];
-
-    // // escala inicial
-    // currentObject.setScale(
-    //     dados.s,
-    //     dados.s,
-    //     dados.s
-    // );
 
     redraw();
 
@@ -279,21 +274,6 @@ const keysPressed = new Set();
 window.addEventListener('keydown', (event) => {
     keysPressed.add(event.key.toLowerCase());
 
-    // if (event.key === "Tab") {
-    //     event.preventDefault();
-    //     indexCurrentObj == objectsScene.length - 1 ? 
-    //         indexCurrentObj = 0 : indexCurrentObj = indexCurrentObj += 1;
-    //     currentObject = objectsScene[indexCurrentObj]
-    //     console.log(objectsScene[indexCurrentObj], objectsScene[indexCurrentObj])
-    // }
-
-    // if (keysPressed.has("shift") && event.key === "Tab") {
-    //     event.preventDefault();
-    //     indexCurrentObj == 0 ? 
-    //         indexCurrentObj = objectsScene.length - 1 : indexCurrentObj = indexCurrentObj -= 1;
-    //     currentObject = objectsScene[indexCurrentObj]
-    //     console.log(objectsScene[indexCurrentObj], objectsScene[indexCurrentObj])
-    // }
     if (event.key === "Tab") {
         event.preventDefault();
 
@@ -330,18 +310,11 @@ window.addEventListener('keydown', (e) => {
 
     switch (e.key) {
         case 'q':
-            currentObject.translate(
-                -1,
-                0,
-                0
-            );
+            currentObject.translate(-1,0,0);
+            console.log(currentObject)
             break;    
         case 'w':
-            currentObject.translate(
-                1,
-                0,
-                0
-            );
+            currentObject.translate(1,0,0);
             break;
         case 'e':
             currentObject.scale.x -=1
@@ -350,42 +323,22 @@ window.addEventListener('keydown', (e) => {
             currentObject.scale.x +=1
             break; 
         case 'a':
-            currentObject.translate(
-                0,
-                -1,
-                0
-            );
+            currentObject.translate(0,-1,0);
             break;    
         case 's':
-            currentObject.translate(
-                0,
-                1,
-                0
-            );
+            currentObject.translate(0,1,0);
             break;
         case 'd':
-            console.log(currentObject)
             currentObject.scale.y -=1
-            console.log(currentObject)
             break;
         case 'f':
-            console.log(currentObject)
             currentObject.scale.y +=1
-            console.log(currentObject)
             break;  
         case 'z':
-            currentObject.translate(
-                0,
-                0,
-                -1
-            );
+            currentObject.translate(0,0,-1);
             break;  
         case 'x':
-            currentObject.translate(
-                0,
-                0,
-                1
-            );
+            currentObject.translate(0,0,1);
             break;
         case 'c':
             currentObject.scale.z -=1
@@ -394,46 +347,22 @@ window.addEventListener('keydown', (e) => {
             currentObject.scale.z +=1
             break;    
         case 't':
-            currentObject.rotate(
-                -1,
-                0,
-                0
-            );
+            currentObject.rotate(-1,0,0);
             break; 
         case 'y':
-            currentObject.rotate(
-                1,
-                0,
-                0
-            );
+            currentObject.rotate(1,0,0);
             break; 
         case 'g':
-            currentObject.rotate(
-                0,
-                -1,
-                0
-            );
+            currentObject.rotate(0,-1,0);
             break;
         case 'h':
-            currentObject.rotate(
-                0,
-                1,
-                0
-            );
+            currentObject.rotate(0,1,0);
             break;
         case 'b':
-            currentObject.rotate(
-                0,
-                0,
-                -1
-            );
+            currentObject.rotate(0,0,-1);
             break;  
         case 'n':
-            currentObject.rotate(
-                0,
-                0,
-                1
-            );
+            currentObject.rotate(0,0,1);
             break;  
         case 'p':
             currentIndex++;
