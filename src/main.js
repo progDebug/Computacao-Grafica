@@ -16,8 +16,6 @@ import { perspectiveDivide } from "./transforms/perspectiveDivide.js"
 
 import { applyPipeline } from "./transforms/transformPipeline.js";
 
-import { translationMatrix } from "./transforms/translation.js";
-
 import { rotationY } from "./transforms/rotation.js";
 
 import { loadTextInputFile, standartFile } from "./data/reader.js"
@@ -163,35 +161,23 @@ const drawObject = (object) => {
 
     const xmin = UNIVERSE[0], xmax = UNIVERSE[1];
     const ymin = UNIVERSE[2], ymax = UNIVERSE[3];
+    console.log(UNIVERSE)
 
     const scaleX = width / (xmax - xmin);
     const scaleY = height / (ymax - ymin);
-    const tx = -xmin * scaleX;
-    const ty = -ymin * scaleY;
 
+    // Matriz de viewport: escala + inversão de Y (mundo é Y-para-cima,
+    // canvas é Y-para-baixo) + translação, tudo em UMA única transformação.
     const TVP = [
         [scaleX, 0, 0, 0],
-        [0, scaleY, 0, 0],
+        [0, -scaleY, 0, 0],
         [0, 0, 1, 0],
-        [tx, ty, 0, 1]
+        [-xmin * scaleX, height + ymin * scaleY, 0, 1]
     ];
-
-    const Rinv = [
-        [1, 0, 0, 0],
-        [0, -1, 0, 0],
-        [0, 0, 1, 0],
-        [0, 0, 0, 1]
-    ];
-
-    const Ttela = translationMatrix(
-        width / 2,
-        height / 2,
-        0
-    );
 
     const screenVertices = applyPipeline(
         projected,
-        [TVP, Rinv, Ttela]
+        [TVP]
     );
 
     if (object instanceof Object3DMesh && object.faces && object.faces.length > 0) {

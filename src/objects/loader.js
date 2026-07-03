@@ -37,6 +37,7 @@ const parseObjData = (date) => {
     }
 
     UNIVERSE = row[0].split(' ').map(Number)
+    console.log(UNIVERSE)
     const n = parseInt(row[1]);
     const objects = []
     row.splice(0, 2)

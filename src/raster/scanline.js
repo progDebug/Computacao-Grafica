@@ -29,12 +29,18 @@ const fillPolygon = (vertices, cor) => {
         const p2 = vertices[(i + 1) % vertices.length];
         
         if (p1[1] !== p2[1]) {
+            const edgeYMin = Math.min(p1[1], p2[1]);
+            const edgeYMax = Math.max(p1[1], p2[1]);
+
             edges.push({
-                yMin: Math.min(p1[1], p2[1]),
-                yMax: Math.max(p1[1], p2[1]),
+                yMin: edgeYMin,
+                yMax: edgeYMax,
                 xIntersection: [p1[0], p2[0]],
                 yValues: [p1[1], p2[1]]
             });
+
+            if (edgeYMin < yMin) yMin = edgeYMin;
+            if (edgeYMax > yMax) yMax = edgeYMax;
         }
     }
 

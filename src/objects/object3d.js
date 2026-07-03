@@ -197,9 +197,9 @@ class Object3DMesh {
     }
 
     getFaceNormal(face, verticesTransformados) {
-        const idx1 = face.arestas[0];
-        const idx2 = face.arestas[1];
-        const idx3 = face.arestas[2];
+        const idx1 = face.arestas[0] - 1;
+        const idx2 = face.arestas[1] - 1;
+        const idx3 = face.arestas[2] - 1;
         
         const v1 = verticesTransformados[idx1];
         const v2 = verticesTransformados[idx2];
@@ -230,7 +230,7 @@ class Object3DMesh {
     computeFaceData(verticesTransformados) {
         this.faces.forEach(face => {
             face.normal = this.getFaceNormal(face, verticesTransformados);
-            face.zMedia = face.arestas.reduce((sum, idx) => sum + verticesTransformados[idx][2], 0) / face.arestas.length;
+            face.zMedia = face.arestas.reduce((sum, idx) => sum + verticesTransformados[idx-1][2], 0) / face.arestas.length;
             face.isVisible = this.isFaceVisible(face.normal);
         });
     }
