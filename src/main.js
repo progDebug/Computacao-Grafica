@@ -38,7 +38,7 @@ let objectsScene = [];
 let currentObject = null;
 let indexCurrentObj = 0;
 const projectionConfig = {
-    type: "pontoFugaZ",
+    type: "cavaleira",
     k: 0.5,
     angle: 45
 }; // padrão da projeção 
@@ -178,17 +178,15 @@ const transform = (object) => {
 
     
     let faces = [];
-    let fa = []; // Face antes da projeção
     object.faces.forEach(subArray => {
         let face = {
             arestas: [], 
             cor: [],
             zMedio: []
         };
+        let fa = [];
         subArray.arestas.forEach(element => {
             face['arestas'].push(screenVertices[element-1])
-        });
-        subArray.arestas.forEach(element => {
             fa.push(transformed[element-1])
         });
         face['cor'] = subArray.cor
@@ -211,7 +209,7 @@ const redraw = async () => {
         const faces = transform(object);
         for (const face of faces) facesToDraw.push(face);
     }
-    facesToDraw.sort((b, a) => a.zMedio - b.zMedio)
+    facesToDraw.sort((a, b) => b.zMedio - a.zMedio)
 //    facesToDraw.map((value) => renderFace(value));
     for (const face of facesToDraw) renderFace(face);
     facesToDraw = [];
