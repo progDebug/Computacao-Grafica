@@ -21,6 +21,9 @@ import { translationMatrix } from "./transforms/translation.js";
 import { rotationY } from "./transforms/rotation.js";
 
 import { loadTextInputFile, standartFile } from "./data/reader.js"
+import { renderFace } from "./core/renderFace.js";
+import { paintFace } from "./raster/paint.js";
+import { getZMedio } from "./math/getZMedio.js";
 
 // ==========================
 // Variaveis Globais
@@ -35,7 +38,7 @@ let objectsScene = [];
 let currentObject = null;
 let indexCurrentObj = 0;
 const projectionConfig = {
-    type: "cavaleira",
+    type: "pontoFugaZ",
     k: 0.5,
     angle: 45
 }; // padrão da projeção 
@@ -46,7 +49,7 @@ const projections = [
     "pontoFugaZ", 
     "pontoFugaZX"
 ];
-
+const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 let currentIndex = 0;
 
 // ==========================
@@ -69,24 +72,18 @@ window.addEventListener('keydown', (event) => {
 
     if(event.key == 'F2') alert(`Controles do Objeto 3D
                                     Tecla | Ação
-                                    Q Move o objeto no eixo X negativo (esquerda)
-                                    W Move o objeto no eixo X positivo (direita)
-                                    A Move o objeto no eixo Y negativo (baixo)
-                                    S Move o objeto no eixo Y positivo (cima)
-                                    Z Move o objeto no eixo Z negativo (trás)
-                                    X Move o objeto no eixo Z positivo (frente)
+                                    Q - W Move o objeto para esquerda e direita
+                                    A - S Move o objeto para baixo e cima
+                                    Z - X Move o objeto pra trás e frente
                                     E Diminui a escala no eixo X
                                     R Aumenta a escala no eixo X
                                     D Diminui a escala no eixo Y
                                     F Aumenta a escala no eixo Y
                                     C Diminui a escala no eixo Z
                                     V Aumenta a escala no eixo Z
-                                    T Rotaciona negativamente no eixo X
-                                    Y Rotaciona positivamente no eixo X
-                                    G Rotaciona negativamente no eixo Y
-                                    H Rotaciona positivamente no eixo Y
-                                    B Rotaciona negativamente no eixo Z
-                                    N Rotaciona negativamente no eixo Z
+                                    T - Y rotaciona no eixo X
+                                    G - H rotaciona no eixo y
+                                    B - N rotaciona no eixo Z
                                     P troca de projeção
                                     `)
 });
@@ -143,7 +140,7 @@ const getProjectionMatrix = () => {
 // ==========================
 
 
-const drawObject = (object) => {
+const transform = (object) => {
     
     const transformed = object.getTransformedVertices();
 
@@ -167,24 +164,6 @@ const drawObject = (object) => {
         [0, 0, 1, 0],
         [0, 0, 0, 1]
     ];
-    // const pTela = width/height; // Proporção da tela                  
-    // UNIVERSE[0] = UNIVERSE[0] * pTela;
-    // UNIVERSE[1] = UNIVERSE[1] * pTela;
-    // UNIVERSE[2] = UNIVERSE[2] * pTela;
-    // UNIVERSE[3] = UNIVERSE[3] * pTela;
-//    UNIVERSE.map((value)=>{return value*pTela})
-
-    // const [screenX, screenY] = [width / (UNIVERSE[1] - UNIVERSE[0]), 
-    //                             height / (UNIVERSE[3] - UNIVERSE[2])]    
-    // const [tx, ty] = [(-(UNIVERSE[0])*width) / (UNIVERSE[1] - UNIVERSE[0]),
-    //                   (-(UNIVERSE[2]*height)) / (UNIVERSE[3] - UNIVERSE[2])]
-
-    // const tTela = [
-    //     [screenX, 0, 0, 0],
-    //     [0, screenY, 0, 0],
-    //     [0, 0, 1, 0],
-    //     [tx, ty, 0, 1]
-    // ]
 
     const Ttela = translationMatrix(
         width / 2,
@@ -197,33 +176,45 @@ const drawObject = (object) => {
         [Rinv, Ttela]
     );
 
-    if (object == currentObject){
-        renderObject(
-            screenVertices,
-            object.arestas,
-            2
-        );        
-        return
-    }
-
-    renderObject(
-        screenVertices,
-        object.arestas,
-        1
-    );
+    
+    let faces = [];
+    let fa = []; // Face antes da projeção
+    object.faces.forEach(subArray => {
+        let face = {
+            arestas: [], 
+            cor: [],
+            zMedio: []
+        };
+        subArray.arestas.forEach(element => {
+            face['arestas'].push(screenVertices[element-1])
+        });
+        subArray.arestas.forEach(element => {
+            fa.push(transformed[element-1])
+        });
+        face['cor'] = subArray.cor
+        face['zMedio'] = getZMedio(fa)
+        faces.push(face)
+    });
+    return faces
 };
 
-const redraw = () => {
+const redraw = async () => {
     ctx.clearRect(
         0,
         0,
         canvas.width,
         canvas.height
     );
+    let facesToDraw = [];
 
     for (const object of objectsScene) {
-        drawObject(object);
+        const faces = transform(object);
+        for (const face of faces) facesToDraw.push(face);
     }
+    facesToDraw.sort((b, a) => a.zMedio - b.zMedio)
+//    facesToDraw.map((value) => renderFace(value));
+    for (const face of facesToDraw) renderFace(face);
+    facesToDraw = [];
 };
 
 // ==========================
@@ -293,7 +284,7 @@ window.addEventListener('keydown', (event) => {
 
         currentObject = objectsScene[indexCurrentObj];
     }
-    redraw();
+    if (event.key != 'Enter') redraw();
 });
 
 window.addEventListener("keyup", (event) => {
